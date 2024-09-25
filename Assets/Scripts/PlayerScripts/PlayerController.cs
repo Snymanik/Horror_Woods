@@ -22,7 +22,9 @@ public class PlayerController : MonoBehaviour
 
     #endregion
     #region CameraMovement
-    float MouseX, MouseY, sensitivity = 10f,xRotation,yRotation;
+    float MouseX, MouseY,xRotation,yRotation;
+    [SerializeField]
+    float sensitivity;
     #endregion
     #region Jumping
     bool isGrounded;

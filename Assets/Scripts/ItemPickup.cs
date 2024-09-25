@@ -8,7 +8,7 @@ public class ItemPickup : MonoBehaviour
     [SerializeField]
     public PlayerController playerController;
     #region ItemPicking
-    public int[] Hotbar = new int[5];
+    
     RaycastHit Checkahead;
 
     [SerializeField]
