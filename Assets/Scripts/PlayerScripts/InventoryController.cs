@@ -12,16 +12,16 @@ public class ItemsScriptibleObject : MonoBehaviour
     public float Weight;
 
     public List<InventoryController> Inventory = new List<InventoryController>();
-
+    
 
 
     // the quantity coming from the object in the scene and not the scriptible object
     // and the scriptible object coming fromt he item type as an enum also the material and such
-    public void AddItem(InventoryController item,int quantity)
+    public void AddItem(InventoryController item,GameObject quantity)
     {
 
         
-    while(item.quantity > 0)
+    while(item.quantity >0   )
         {
             if (maxWeight > Weight + item.weight && maxSlots > Inventory.Count)
             {

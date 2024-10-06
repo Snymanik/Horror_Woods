@@ -11,6 +11,7 @@ public class InventoryController : ScriptableObject
     public int weight;
     public string description;
     public Sprite Icon;
+    public GameObject gobject;
     public bool IsStackable;
     public int quantity;
     public enum ItemType
@@ -18,4 +19,6 @@ public class InventoryController : ScriptableObject
     public int durability;
 
 }
+
+
 

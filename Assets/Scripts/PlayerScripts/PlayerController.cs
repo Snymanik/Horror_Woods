@@ -1,13 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    #region Bruh
+    [SerializeField]  InventoryController checkthis;
 
-  
-    
+    #endregion
+
     [SerializeField]
     GameObject camera_;
     
@@ -95,6 +99,15 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(SprintingOff());
             keyProblemSolver =true;
         }
+
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            InventoryController Fuckmke = AssetDatabase.LoadAssetAtPath<InventoryController>("Assets / ScriptableObjects / Wood.asset");
+
+
+            AddObject(checkthis);
+        }
+
     }
 
     IEnumerator SprintingMode()
@@ -126,7 +139,6 @@ public class PlayerController : MonoBehaviour
         }
 
     }
-
 
     private void SpeedControl()
     {
@@ -164,5 +176,25 @@ public class PlayerController : MonoBehaviour
         }
      
     }
-    
+
+    //idk what i am doing
+    public int Quantity;
+
+    public void AddObject(InventoryController InvContr)
+    {
+
+        if (InvContr.gobject != null)
+        {
+
+            GameObject spawnedObject = Instantiate(InvContr.gobject, Vector3.zero, Quaternion.identity);
+
+            Quantity = Random.Range(1, InvContr.quantity);
+
+
+        }
+        else
+        {
+            Debug.LogError("No prefab assigned in the ScriptableObject!");
+        }
+    }
 }
