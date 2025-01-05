@@ -546,7 +546,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1088471711}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: CameraPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -723,7 +723,8 @@ GameObject:
   - component: {fileID: 2108188617}
   - component: {fileID: 2108188622}
   - component: {fileID: 2108188623}
-  m_Layer: 0
+  - component: {fileID: 2108188624}
+  m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -871,7 +872,6 @@ MonoBehaviour:
   speed: 10
   drag: 3
   maxVelocity: 7
-  Quantity: 0
 --- !u!114 &2108188623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -888,6 +888,22 @@ MonoBehaviour:
   ItemLayer:
     serializedVersion: 2
     m_Bits: 128
+--- !u!114 &2108188624
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2108188616}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 71b23bba04b39234baf6be13a4c46e78, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  maxSlots: 10
+  maxWeight: 10000
+  Weight: 0
+  Inventory: []
 --- !u!1001 &187464369848387125
 PrefabInstance:
   m_ObjectHideFlags: 0

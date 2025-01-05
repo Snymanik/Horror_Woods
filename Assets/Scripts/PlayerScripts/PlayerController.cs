@@ -100,14 +100,22 @@ public class PlayerController : MonoBehaviour
             keyProblemSolver =true;
         }
 
+        
+
+    }
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            InventoryController Fuckmke = AssetDatabase.LoadAssetAtPath<InventoryController>("Assets / ScriptableObjects / Wood.asset");
+            // InventoryController Fuckmke = AssetDatabase.LoadAssetAtPath<InventoryController>("Assets / ScriptableObjects / Wood.asset");
+
+            // Debug.Log($"{Fuckmke} p has been pressed");
+
 
 
             AddObject(checkthis);
-        }
 
+        }
     }
 
     IEnumerator SprintingMode()
@@ -178,7 +186,7 @@ public class PlayerController : MonoBehaviour
     }
 
     //idk what i am doing
-    public int Quantity;
+   // public int Quantity;
 
     public void AddObject(InventoryController InvContr)
     {
@@ -186,9 +194,10 @@ public class PlayerController : MonoBehaviour
         if (InvContr.gobject != null)
         {
 
-            GameObject spawnedObject = Instantiate(InvContr.gobject, Vector3.zero, Quaternion.identity);
+            GameObject spawnedObject = Instantiate(InvContr.gobject, this.gameObject.transform.position, Quaternion.identity);
+            spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = InvContr;
 
-            Quantity = Random.Range(1, InvContr.quantity);
+           // Quantity = Random.Range(1, InvContr.quantity);
 
 
         }
