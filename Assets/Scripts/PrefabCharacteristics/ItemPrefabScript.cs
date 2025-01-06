@@ -5,7 +5,7 @@ using UnityEngine;
 public class ItemPrefabScript : MonoBehaviour
 {
     public int prefabQuantity = 1;
-    public InventoryController scriptibleObjectType;
+    public ItemsScriptibleObject scriptibleObjectType;
     private void Awake()
     {
         prefabQuantity = Random.Range(1, 11);

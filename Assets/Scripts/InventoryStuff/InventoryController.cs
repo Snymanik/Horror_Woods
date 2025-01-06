@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ItemsScriptibleObject : MonoBehaviour
+public class InventoryController : MonoBehaviour
 {
     #region Limits
     [SerializeField]
@@ -11,14 +11,14 @@ public class ItemsScriptibleObject : MonoBehaviour
     public float maxWeight;
     public float Weight=0;
     #endregion
-    public List<InventoryController> Inventory = new List<InventoryController>();
+    public List<ItemsScriptibleObject> Inventory = new List<ItemsScriptibleObject>();
     
     
 
 
     // the quantity coming from the object in the scene and not the scriptible object
     // and the scriptible object coming fromt he item type as an enum also the material and such
-    public void AddItem(InventoryController item)
+    public void AddItem(ItemsScriptibleObject item)
     { 
             if (maxWeight > Weight + item.weight)  
             {
@@ -34,7 +34,7 @@ public class ItemsScriptibleObject : MonoBehaviour
                 }
             else
                 {
-                    InventoryController exisingItem = Inventory.Find(joiningItem => joiningItem.itemName == item.itemName);
+                    ItemsScriptibleObject exisingItem = Inventory.Find(joiningItem => joiningItem.itemName == item.itemName);
                 if (exisingItem != null)
                 {
                     exisingItem.quantity += 1;

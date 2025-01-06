@@ -4,8 +4,8 @@ using UnityEngine;
 
 
 //Check the create asset menu
-[CreateAssetMenu(fileName = "Item", menuName = "ScriptableObjects/SpawnManagerScriptableObject", order = 1)]
-public class InventoryController : MonoBehaviour
+[CreateAssetMenu(fileName = "Item", menuName = "ScriptableObjects/SpawnManagerScriptableObject")]
+public class ItemsScriptibleObject : MonoBehaviour
 {
     public string itemName;
     public int weight;

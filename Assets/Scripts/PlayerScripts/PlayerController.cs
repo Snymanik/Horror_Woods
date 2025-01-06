@@ -8,7 +8,7 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     #region Bruh
-    [SerializeField]  InventoryController checkthis;
+    [SerializeField]  ItemsScriptibleObject checkthis;
 
     #endregion
 
@@ -188,7 +188,7 @@ public class PlayerController : MonoBehaviour
     //idk what i am doing
    // public int Quantity;
 
-    public void AddObject(InventoryController InvContr)
+    public void AddObject(ItemsScriptibleObject InvContr)
     {
 
         if (InvContr.gobject != null)
