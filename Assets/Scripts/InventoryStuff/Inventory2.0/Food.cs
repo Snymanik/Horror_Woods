@@ -7,7 +7,7 @@ using UnityEngine;
 public class Food : Item
 {
     [Header("Food")]
-    public int quantity;
+    //public int quantity;
     public int healthAdd;
     public override Item GetItem() { return this; }
     public override Item GetTool() { return null; }

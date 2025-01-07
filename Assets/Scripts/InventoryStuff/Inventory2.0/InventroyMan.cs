@@ -11,9 +11,10 @@ public class InventroyMan : MonoBehaviour
     [SerializeField] private GameObject slotHolder ;
     [SerializeField] private Item itemToAdd ;
     [SerializeField] private Item itemToRemove ;
-    private GameObject[] slots;
+    //later delete the serialize field
+    [SerializeField] private GameObject[] slots;
 
-    public List<SlotTrait> Inventory = new List<SlotTrait>();
+     public List<SlotTrait> Inventory = new List<SlotTrait>();
 
     TextMeshPro fuck_you= new TextMeshPro();
     private void Start()
@@ -30,7 +31,7 @@ public class InventroyMan : MonoBehaviour
 
 
         AddToInventory(itemToAdd);
-        //RemoveFromInventory(itemToRemove);
+        RemoveFromInventory(itemToRemove);
 
 
 
@@ -46,8 +47,16 @@ public class InventroyMan : MonoBehaviour
                 {
                     slots[i].transform.GetChild(0).GetComponent<RawImage>().enabled = true;
                     slots[i].transform.GetChild(0).GetComponent<RawImage>().texture = Inventory[i].GetItem().Icon;
+                if (Inventory[i].GetItem().IsStackable)
+                {
+                    
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = Inventory[i].GetQuantity().ToString();
-                 
+                }
+                else
+                    slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
+
+
+
             }
             catch
                 {
@@ -64,14 +73,71 @@ public class InventroyMan : MonoBehaviour
         }
 
     }
+
+    // change to bool or not
     public void AddToInventory(Item Item) {
 
-        //Inventory.Add(Item);
+        SlotTrait slot = Contains(Item);
+        if (slot != null && slot.GetItem().IsStackable)
+        {
+            slot.AddQuantity(Item.GetItem().quantity);
+        }
+        else
+        {
+            if(slots.Length > Inventory.Count)
+            Inventory.Add(new SlotTrait(Item,Item.GetItem().quantity));
+            
+        }
         RefreshUI();
     }
     
     public void RemoveFromInventory(Item Item) {
-       // Inventory.Remove(Item);
+        // Inventory.Remove(Item);
+
+        SlotTrait temp = Contains(Item);
+        if (temp != null)
+        {
+            if(temp.GetQuantity() > 1)
+            {
+                temp.AddQuantity(-1);
+            }
+            else
+            {
+                SlotTrait Trait = new SlotTrait();
+                foreach (SlotTrait slot in Inventory)
+                {
+
+
+                    if (slot.GetItem() == Item)
+                    {
+                        Trait = slot;
+                        break;
+                    }
+                }
+                Inventory.Remove(Trait);
+            }
+            
+        }
+        else
+        {
+            Debug.Log("No item in inventory");
+        }
+
+
+
+          
+
         RefreshUI();
+    }
+    public SlotTrait Contains(Item _item)
+    {
+        foreach(SlotTrait slot in Inventory)
+        {
+            if (slot.GetItem() == _item)
+            {
+                return slot;
+            }
+        }
+        return null;
     }
 }

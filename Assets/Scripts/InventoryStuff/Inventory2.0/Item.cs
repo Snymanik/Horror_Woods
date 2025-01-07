@@ -9,6 +9,8 @@ public abstract class Item : ScriptableObject
     public string description;
     public Texture Icon;
     public GameObject gobject;
+    public int quantity;
+    public bool IsStackable = true;
     
 
     public abstract Item GetItem();

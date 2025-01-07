@@ -827,8 +827,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   slotHolder: {fileID: 1981189387}
-  itemToAdd: {fileID: 0}
-  itemToRemove: {fileID: 0}
+  itemToAdd: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
+  itemToRemove: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
+  slots: []
+  Inventory:
+  - item: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
+    quantity: 2
+  - item: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
+    quantity: 3
+  - item: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
+    quantity: 2
 --- !u!4 &461697016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1199035916374872671, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
