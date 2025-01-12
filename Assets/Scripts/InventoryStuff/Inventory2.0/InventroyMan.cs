@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 public class InventroyMan : MonoBehaviour
 {
@@ -14,9 +15,12 @@ public class InventroyMan : MonoBehaviour
     //later delete the serialize field
     [SerializeField] private GameObject[] slots;
 
-     public List<SlotTrait> Inventory = new List<SlotTrait>();
 
-    TextMeshPro fuck_you= new TextMeshPro();
+
+    //public List<SlotTrait> Inventory = new List<SlotTrait>(); // Old list of the Inventory changed to SlotTrait Array
+    public SlotTrait[] Inventory;
+        
+    
     private void Start()
     {
 
@@ -24,6 +28,15 @@ public class InventroyMan : MonoBehaviour
 
 
         slots = new GameObject[slotHolder.transform.childCount];
+        Inventory = new SlotTrait[slots.Length];
+        for(int i = 0;i< Inventory.Length; i++)
+        {
+            
+                Inventory[i] = new SlotTrait();
+            
+            
+        }
+
         for(int i = 0; i < slotHolder.transform.childCount; i++)
             slots[i] = slotHolder.transform.GetChild(i).gameObject;
 
@@ -31,7 +44,7 @@ public class InventroyMan : MonoBehaviour
 
 
         AddToInventory(itemToAdd);
-        RemoveFromInventory(itemToRemove);
+        //RemoveFromInventory(itemToRemove);
 
 
 
@@ -75,6 +88,7 @@ public class InventroyMan : MonoBehaviour
     }
 
     // change to bool or not
+    
     public void AddToInventory(Item Item) {
 
         SlotTrait slot = Contains(Item);
@@ -84,8 +98,16 @@ public class InventroyMan : MonoBehaviour
         }
         else
         {
-            if(slots.Length > Inventory.Count)
-            Inventory.Add(new SlotTrait(Item,Item.GetItem().quantity));
+            for(int i =0;i< Inventory.Length; i++)
+            {
+                if (Inventory[i].GetItem() == null)
+                {
+                    Inventory[i] = new SlotTrait(Item,Item.GetItem().quantity);
+                    break;
+                }
+            }
+ /*           if(slots.Length > Inventory.Count)
+            Inventory.Add(new SlotTrait(Item,Item.GetItem().quantity));*/
             
         }
         RefreshUI();
@@ -103,18 +125,18 @@ public class InventroyMan : MonoBehaviour
             }
             else
             {
-                SlotTrait Trait = new SlotTrait();
-                foreach (SlotTrait slot in Inventory)
+                int slotRemoveIndex = 0;
+                for(int i = 0;i< Inventory.Length;i++)
                 {
 
 
-                    if (slot.GetItem() == Item)
+                    if (Inventory[i].GetItem() == Item)
                     {
-                        Trait = slot;
+                        slotRemoveIndex = i;
                         break;
                     }
                 }
-                Inventory.Remove(Trait);
+                //Inventory[slotRemoveIndex].Clear();
             }
             
         }
@@ -129,15 +151,25 @@ public class InventroyMan : MonoBehaviour
 
         RefreshUI();
     }
+    
     public SlotTrait Contains(Item _item)
     {
-        foreach(SlotTrait slot in Inventory)
-        {
-            if (slot.GetItem() == _item)
-            {
-                return slot;
-            }
-        }
+        //foreach(SlotTrait slot in Inventory)
+        //{
+        //    if (slot.GetItem() == _item)
+        //    {
+        //        return slot;
+        //    }
+        //}
         return null;
+        for (int i = 0; i < Inventory.Length; i++)
+        {
+            if (Inventory[i].GetItem() != _item)
+            {
+                return Inventory[i];
+            }
+            return null;
+        }
     }
+   
 }

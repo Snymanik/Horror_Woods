@@ -960,15 +960,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   slotHolder: {fileID: 1981189387}
   itemToAdd: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
-  itemToRemove: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
+  itemToRemove: {fileID: 0}
   slots: []
-  Inventory:
-  - item: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
-    quantity: 2
-  - item: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
-    quantity: 3
-  - item: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
-    quantity: 2
+  Inventory: []
 --- !u!4 &461697016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1199035916374872671, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
@@ -1442,6 +1436,78 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7559329399382600649, guid: 7afa508dea8d068429fc35d845467123, type: 3}
   m_PrefabInstance: {fileID: 207882575}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &883254676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 883254677}
+  - component: {fileID: 883254679}
+  - component: {fileID: 883254678}
+  m_Layer: 5
+  m_Name: Cursor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!224 &883254677
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883254676}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1421951616}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 50, y: 50}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &883254678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883254676}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 0, b: 0, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+--- !u!222 &883254679
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 883254676}
+  m_CullTransparentMesh: 1
 --- !u!1001 &940483628
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1910,7 +1976,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: INVENTORY
+  m_Text: INVENTORY change from 0.7 to 1 scale
 --- !u!222 &1286621186
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -2019,6 +2085,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1915213593}
+  - {fileID: 883254677}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2681,9 +2748,9 @@ RectTransform:
   m_Father: {fileID: 1421951616}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -250, y: 225}
-  m_SizeDelta: {x: 500, y: 450}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: -250, y: 0}
+  m_SizeDelta: {x: 500, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1915213594
 MonoBehaviour:
@@ -2753,7 +2820,7 @@ RectTransform:
   m_GameObject: {fileID: 1981189387}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.7, y: 0.7, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 14955771}
