@@ -46,8 +46,8 @@ public class PlayerController : MonoBehaviour
     #endregion
     void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        //Cursor.lockState = CursorLockMode.Locked;
+       // Cursor.visible = false;
         rb = GetComponent<Rigidbody>();
     }
 

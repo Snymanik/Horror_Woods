@@ -16,6 +16,6 @@ MonoBehaviour:
   description: Fuck you
   Icon: {fileID: 2800000, guid: dffef66376be4fa480fb02b19edbe903, type: 3}
   gobject: {fileID: 0}
-  quantity: 2
+  quantity: 1
   IsStackable: 0
   Tooltype: 0

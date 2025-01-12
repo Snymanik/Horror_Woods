@@ -12,7 +12,7 @@ public abstract class Item : ScriptableObject
     public int quantity;
     public bool IsStackable = true;
     
-
+    
     public abstract Item GetItem();
     public abstract Item GetTool();
     public abstract Item GetMisc();
