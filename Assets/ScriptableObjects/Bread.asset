@@ -15,8 +15,8 @@ MonoBehaviour:
   itemName: Bread
   description: Delicious
   Icon: {fileID: 10900, guid: 0000000000000000f000000000000000, type: 0}
-  gobject: {fileID: 0}
-  quantity: 2
+  gobject: {fileID: 8690733193468674444, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
+  quantity: 10
   maxStackSize: 10
   IsStackable: 1
   healthAdd: 2

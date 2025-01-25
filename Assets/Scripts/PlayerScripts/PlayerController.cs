@@ -8,8 +8,8 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     #region Bruh
-    [SerializeField]  ItemsScriptibleObject checkthis;
-
+    [SerializeField]  Item checkthis;
+    
     #endregion
 
     [SerializeField]
@@ -44,10 +44,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private float speed,drag,maxVelocity;
     #endregion
+    #region PlayerInventory
+    public bool inventoryOpen = false;
+    [SerializeField] private GameObject invPanel;
+
+    #endregion
     void Start()
     {
-        //Cursor.lockState = CursorLockMode.Locked;
-       // Cursor.visible = false;
+       Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        invPanel.SetActive(false);
         rb = GetComponent<Rigidbody>();
     }
 
@@ -66,8 +72,12 @@ public class PlayerController : MonoBehaviour
         xRotation -= MouseY * Time.deltaTime * sensitivity;
         yRotation += MouseX * Time.deltaTime * sensitivity;
         xRotation = Mathf.Clamp(xRotation,-90, 90);
-        camera_.transform.rotation = Quaternion.Euler(xRotation, yRotation+90, 0);
-        this.gameObject.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        if (!inventoryOpen)
+        {
+            camera_.transform.rotation = Quaternion.Euler(xRotation, yRotation + 90, 0);
+            this.gameObject.transform.rotation = Quaternion.Euler(0, yRotation, 0);
+        }
+        
 
         dir = this.gameObject.transform.forward*Horizontal  + this.gameObject.transform.right*Vertical ;
         rb.AddForce(dir*speed,ForceMode.Force);
@@ -107,14 +117,21 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            // InventoryController Fuckmke = AssetDatabase.LoadAssetAtPath<InventoryController>("Assets / ScriptableObjects / Wood.asset");
-
-            // Debug.Log($"{Fuckmke} p has been pressed");
-
-
-
             AddObject(checkthis);
-
+        }
+        if (Input.GetKeyDown(KeyCode.I) && !inventoryOpen)
+        {
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+            inventoryOpen = true;
+            invPanel.SetActive(true);
+        }
+        else if (Input.GetKeyDown(KeyCode.I))
+            {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+            inventoryOpen = false;
+            invPanel.SetActive(false);
         }
     }
 
@@ -188,13 +205,16 @@ public class PlayerController : MonoBehaviour
     //idk what i am doing
    // public int Quantity;
 
-    public void AddObject(ItemsScriptibleObject InvContr)
+    public void AddObject(Item InvContr)
     {
 
         if (InvContr.gobject != null)
         {
+            GameObject prefabToSpawn = InvContr.gobject;
+            
+            GameObject spawnedObject = Instantiate(prefabToSpawn, this.gameObject.transform.position, Quaternion.identity);
 
-            GameObject spawnedObject = Instantiate(InvContr.gobject, this.gameObject.transform.position, Quaternion.identity);
+           
             spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = InvContr;
 
            // Quantity = Random.Range(1, InvContr.quantity);

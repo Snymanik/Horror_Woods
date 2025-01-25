@@ -10,7 +10,7 @@ public class InventroyMan : MonoBehaviour
 {
 
     [SerializeField] private GameObject itemCursor;
-
+    [SerializeField] private Transform player;
     [SerializeField] private SlotTrait selectedItem;
     private bool itemSelect;
 
@@ -43,6 +43,7 @@ public class InventroyMan : MonoBehaviour
             
             
         }
+        
         for (int i = 0; i < slotHolder.transform.childCount; i++)
             slots[i] = slotHolder.transform.GetChild(i).gameObject;
         for (int i = 0;i< startingItems.Length; i++)
@@ -60,7 +61,7 @@ public class InventroyMan : MonoBehaviour
         AddToInventory(itemToAdd, itemToAdd.GetItem().quantity);
         //RemoveFromInventory(itemToRemove);
 
-        //Debug.Log(Inventory[0] + " CYKA" +  Inventory[0].GetItem() + "BLYAT" + Inventory[0].GetQuantity());
+        
 
     }
     private void Update()
@@ -120,6 +121,11 @@ public class InventroyMan : MonoBehaviour
                 ItemMove_Half();
             }
         }
+        if (Input.GetKeyDown(KeyCode.Q) && player.gameObject.GetComponent<PlayerController>().inventoryOpen)
+        {
+           RemoveFromInventory( GetClosestSlot());
+
+        }
     }
 
     #region Inv Utils
@@ -162,23 +168,25 @@ public class InventroyMan : MonoBehaviour
 
         if(Item != null)
         {
+            
             SlotTrait slot = Contains(Item);
             // Debug.Log(slot.GetItem());
             if (slot != null)
             {
                 int quantityCanAdd  = slot.GetItem().maxStackSize - slot.GetQuantity();
-                
-
-
                 int maxCanAdd = Mathf.Clamp(quantity, 0, quantityCanAdd);
                 int remain = quantity - maxCanAdd;
                 
+
+
+
                 slot.ChangeQuantity(maxCanAdd);
+                
                 if (remain > 0)
                 {
                     AddToInventory(Item, remain);
-                }  
-
+                }
+               
             }
             else
             {
@@ -195,6 +203,7 @@ public class InventroyMan : MonoBehaviour
                         int remain = quantity - maxCanAdd;
 
                         Inventory[i] = new SlotTrait(Item, maxCanAdd);
+                        
                         if (remain > 0)
                         {
                             AddToInventory(Item, remain);
@@ -206,11 +215,22 @@ public class InventroyMan : MonoBehaviour
 
 
 
-                        break;
+                        // break ;
+                        RefreshUI();
+                        return;
+                        
+
                     }
+                    
+                    
                 }
-                /*           if(slots.Length > Inventory.Count)
-                           Inventory.Add(new SlotTrait(Item,Item.GetItem().quantity));*/
+                // instnatiate smth
+               
+                    GameObject spawnedObject = Instantiate(Item.GetItem().gobject, player.position, Quaternion.identity);
+                    spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = Item;
+                    spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = quantity;
+                
+
 
             }
             RefreshUI();
@@ -219,32 +239,36 @@ public class InventroyMan : MonoBehaviour
         
     }
     
-    public void RemoveFromInventory(Item Item) {
-        // Inventory.Remove(Item);
-
-        SlotTrait temp = Contains(Item);
-        if (temp != null)
+    public void RemoveFromInventory(SlotTrait Item) {
+        
+        //SlotTrait temp = Contains(Item);
+        if (Item != null)
         {
-            if(temp.GetQuantity() > 1)
-            {
-                temp.ChangeQuantity(-1);
-            }
-            else
-            {
-                int slotRemoveIndex = 0;
-                for(int i = 0;i< Inventory.Length;i++)
-                {
+            //if(Item.GetQuantity() > 1)
+            //{
+            //    Item.ChangeQuantity(-1);
+               
+            //}
+            //else
+            //{
+                //int slotRemoveIndex = 0;
+                //for(int i = 0;i< Inventory.Length;i++)
+                //{
 
 
-                    if (Inventory[i].GetItem() == Item)
-                    {
-                        slotRemoveIndex = i;
-                        break;
-                    }
-                }
-                Inventory[slotRemoveIndex].Clear();
-            }
-            RefreshUI();
+                //    if (Inventory[i].GetItem() == Item)
+                //    {
+                //        slotRemoveIndex = i;
+                //        break;
+                //    }
+                //}
+                //Inventory[slotRemoveIndex].Clear();
+                RefreshUI();
+                GameObject spawnedObject = Instantiate(Item.GetItem().gobject, player.position, Quaternion.identity);
+                spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = Item.GetItem();
+                spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = Item.GetQuantity();
+                Item.Clear();
+            //}
             
         }
         else
@@ -261,19 +285,12 @@ public class InventroyMan : MonoBehaviour
     
     public SlotTrait Contains(Item _item) 
     {
-        //foreach(SlotTrait slot in Inventory)
-        //{
-        //    if (slot.GetItem() == _item)
-        //    {
-        //        return slot;
-        //    }
-        //}
-        //return null;
         
+
         for (int i = 0; i < Inventory.Length; i++)
         {
             
-            if (Inventory[i].GetItem() == _item && Inventory[i].GetItem().IsStackable && Inventory[i].GetQuantity()+_item.GetItem().quantity+2 <= Inventory[i].GetItem().maxStackSize)
+            if (Inventory[i].GetItem() == _item && Inventory[i].GetItem().IsStackable && Inventory[i].GetQuantity()+_item.GetItem().quantity <= Inventory[i].GetItem().maxStackSize)
             {
                 
                 return Inventory[i];
@@ -333,8 +350,14 @@ public class InventroyMan : MonoBehaviour
 
         if(originalSlot == null)
         {
-            AddToInventory(movingSlot.GetItem(), movingSlot.GetQuantity());
+            // AddToInventory(movingSlot.GetItem(), movingSlot.GetQuantity());  DEPENDS IF YOU WANT IT VBAC
+            GameObject spawnedObject = Instantiate(movingSlot.GetItem().gobject, player.position, Quaternion.identity);
+             spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = movingSlot.GetItem();
+            spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = movingSlot.GetQuantity();
+
+
             movingSlot.Clear();
+            
         }
         else
         {
@@ -358,9 +381,6 @@ public class InventroyMan : MonoBehaviour
                         RefreshUI();
                         return false;
                     }
-
-
-
 
                     //originalSlot.ChangeQuantity(movingSlot.GetQuantity());
                     //movingSlot.Clear();

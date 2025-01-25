@@ -959,6 +959,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemCursor: {fileID: 883254676}
+  player: {fileID: 2108188621}
   selectedItem:
     item: {fileID: 0}
     quantity: 0
@@ -3142,7 +3143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0eac06153e635345802e9c5db6a9f6a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  checkthis: {fileID: 11400000, guid: 0a119991e4b80fe42b3008a4d37e67c7, type: 2}
+  checkthis: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
   camera_: {fileID: 963194225}
   dir: {x: 0, y: 0, z: 0}
   stamina: 10
@@ -3155,6 +3156,8 @@ MonoBehaviour:
   speed: 10
   drag: 3
   maxVelocity: 7
+  inventoryOpen: 0
+  invPanel: {fileID: 1915213592}
 --- !u!114 &2108188623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3168,6 +3171,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerController: {fileID: 2108188622}
+  invManager: {fileID: 352490991}
   ItemLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -3183,10 +3187,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71b23bba04b39234baf6be13a4c46e78, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSlots: 10
-  maxWeight: 10000
-  Weight: 0
-  Inventory: []
 --- !u!224 &2145163547 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7559329399382600649, guid: 7afa508dea8d068429fc35d845467123, type: 3}
@@ -3240,9 +3240,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 90
       objectReference: {fileID: 0}
+    - target: {fileID: 5035899255411268367, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
+      propertyPath: scriptibleObjectType
+      value: 
+      objectReference: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
     - target: {fileID: 8690733193468674444, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
       propertyPath: m_Name
-      value: Flashlight
+      value: Bread
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -3259,7 +3263,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5072557067309077728, guid: bf391cc30f455114fb745808c8493cc4, type: 3}
       propertyPath: m_Name
-      value: Metal
+      value: Sword
       objectReference: {fileID: 0}
     - target: {fileID: 5151663349568030339, guid: bf391cc30f455114fb745808c8493cc4, type: 3}
       propertyPath: m_LocalPosition.x
@@ -3301,6 +3305,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5919571255466417070, guid: bf391cc30f455114fb745808c8493cc4, type: 3}
+      propertyPath: scriptibleObjectType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -3477,6 +3485,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Wood
       objectReference: {fileID: 0}
+    - target: {fileID: 7978752811695226763, guid: 140d146049fb2d948974d4de45314261, type: 3}
+      propertyPath: scriptibleObjectType
+      value: 
+      objectReference: {fileID: 11400000, guid: 6a5daa98ee5b45c45b4d3f9349c9cd28, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

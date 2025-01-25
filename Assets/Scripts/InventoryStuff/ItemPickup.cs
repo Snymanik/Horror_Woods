@@ -8,10 +8,10 @@ public class ItemPickup : MonoBehaviour
 {
     [SerializeField]
     public PlayerController playerController;
-
+    [SerializeField] private GameObject invManager;
 
     #region ItemPicking
-    
+
     RaycastHit Checkahead;
 
     [SerializeField]
@@ -21,18 +21,6 @@ public class ItemPickup : MonoBehaviour
     #endregion
 
 
-    //#region Inventory
-    //ItemsScriptibleObject item;
-
-    //#endregion
-
-    //public void Start()
-    //{
-    //   item = FindObjectOfType<ItemsScriptibleObject>();
-    //}
-
-
-    // Update is called once per frame
     void FixedUpdate()
     {
        bloedirig = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -57,33 +45,10 @@ public class ItemPickup : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.E) && Selected != null)
         {
-            //ItemsScriptibleObject.AddItem(Selected.GetComponent<ItemPrefabScript>().ScriptibleObjectType,Selected.GetComponent<ItemPrefabScript>().prefabQuantity);
-           
-            
+           // Debug.Log(Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType + "  " + Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity);
+            invManager.GetComponent<InventroyMan>().AddToInventory(Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType, Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity);
+            Destroy(Selected.gameObject);
 
-             while(Selected.GetComponent<ItemPrefabScript>().prefabQuantity > 0)
-             {
-
-                //int help = Selected.GetComponent<ItemPrefabScript>().prefabQuantity;
-                // fix this
-
-
-                // this.gameObject.GetComponent<ItemsScriptibleObject>().AddItem(Selected.gameObject.GetComponent<ItemPrefabScript>().scriptibleObjectType);
-                Debug.Log(Selected.gameObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.itemName);
-
-
-
-                if(0 == Selected.GetComponent<ItemPrefabScript>().prefabQuantity)
-                 {
-                     break;
-                 }
-                Selected.GetComponent<ItemPrefabScript>().prefabQuantity--;
-                Debug.Log("IDK");
-
-
-             }
-
-            // CHECK THIS OUT
         }
         else
         {
@@ -104,11 +69,13 @@ public class ItemPickup : MonoBehaviour
         
         if (Physics.Raycast(bloedirig, out Checkahead, 20, ItemLayer))
         {
-            if(Checkahead.transform.position != selected.transform.position) 
+            if (selected != null)
             {
-                selected.GetComponent<Renderer>().material.color = Color.blue;
+                if (Checkahead.transform.position != selected.transform.position)
+                {
+                    selected.GetComponent<Renderer>().material.color = Color.blue;
+                }
             }
-
         }
         else
         {
@@ -118,9 +85,5 @@ public class ItemPickup : MonoBehaviour
             }
            
         }
-             
-        
-
-        
     }
 }
