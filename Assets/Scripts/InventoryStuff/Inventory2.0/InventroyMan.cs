@@ -457,9 +457,21 @@ public class InventroyMan : MonoBehaviour
     }
     private SlotTrait GetClosestSlot()
     {
+
+         float baseWidth = 3840f; 
+        float baseHeight = 2160; 
+
+
+        float scaleFactor = Mathf.Min(Screen.width / baseWidth, Screen.height / baseHeight);
+
+
+        
+
+       
+
         for (int i = 0; i < slots.Length; i++)
         {
-            if (Vector2.Distance(Input.mousePosition, slots[i].transform.position) < 120)
+            if (Vector2.Distance(Input.mousePosition, slots[i].transform.position) < 120 * scaleFactor)
             {
                 return Inventory[i];
             }
