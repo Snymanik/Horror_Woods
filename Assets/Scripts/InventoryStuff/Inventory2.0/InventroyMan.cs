@@ -39,23 +39,26 @@ public class InventroyMan : MonoBehaviour
         for(int i = 0;i< Inventory.Length; i++)
         {
             
-                Inventory[i] = new SlotTrait();
+                Inventory[i] = new SlotTrait(null, 0);
             
             
         }
-        for(int i = 0;i< startingItems.Length; i++)
+        for (int i = 0; i < slotHolder.transform.childCount; i++)
+            slots[i] = slotHolder.transform.GetChild(i).gameObject;
+        for (int i = 0;i< startingItems.Length; i++)
         {
-            Inventory[i] = startingItems[i];
+           // Debug.Log(startingItems[i].GetItem().maxStackSize);
+            AddToInventory(startingItems[i].GetItem(), startingItems[i].GetQuantity());
+           
         }
 
-        for(int i = 0; i < slotHolder.transform.childCount; i++)
-            slots[i] = slotHolder.transform.GetChild(i).gameObject;
+        
 
         RefreshUI();
 
 
         AddToInventory(itemToAdd, itemToAdd.GetItem().quantity);
-        RemoveFromInventory(itemToRemove);
+        //RemoveFromInventory(itemToRemove);
 
         //Debug.Log(Inventory[0] + " CYKA" +  Inventory[0].GetItem() + "BLYAT" + Inventory[0].GetQuantity());
 
@@ -161,11 +164,20 @@ public class InventroyMan : MonoBehaviour
         {
             SlotTrait slot = Contains(Item);
             // Debug.Log(slot.GetItem());
-            if (slot != null && slot.GetItem().IsStackable)
+            if (slot != null)
             {
+                int quantityCanAdd  = slot.GetItem().maxStackSize - slot.GetQuantity();
+                
 
-                slot.ChangeQuantity(Item.GetItem().quantity);
 
+                int maxCanAdd = Mathf.Clamp(quantity, 0, quantityCanAdd);
+                int remain = quantity - maxCanAdd;
+                
+                slot.ChangeQuantity(maxCanAdd);
+                if (remain > 0)
+                {
+                    AddToInventory(Item, remain);
+                }  
 
             }
             else
@@ -174,7 +186,26 @@ public class InventroyMan : MonoBehaviour
                 {
                     if (Inventory[i].GetItem() == null)
                     {
-                        Inventory[i] = new SlotTrait(Item, quantity);
+
+                        
+
+
+                        int quantityCanAdd = Item.GetItem().maxStackSize - quantity;
+                        int maxCanAdd = Mathf.Clamp(quantity, 0, quantityCanAdd);
+                        int remain = quantity - maxCanAdd;
+
+                        Inventory[i] = new SlotTrait(Item, maxCanAdd);
+                        if (remain > 0)
+                        {
+                            AddToInventory(Item, remain);
+
+                        }
+
+
+
+
+
+
                         break;
                     }
                 }
@@ -228,7 +259,7 @@ public class InventroyMan : MonoBehaviour
         RefreshUI();
     }
     
-    public SlotTrait Contains(Item _item)
+    public SlotTrait Contains(Item _item) 
     {
         //foreach(SlotTrait slot in Inventory)
         //{
@@ -238,10 +269,13 @@ public class InventroyMan : MonoBehaviour
         //    }
         //}
         //return null;
+        
         for (int i = 0; i < Inventory.Length; i++)
         {
-            if (Inventory[i].GetItem() == _item)
+            
+            if (Inventory[i].GetItem() == _item && Inventory[i].GetItem().IsStackable && Inventory[i].GetQuantity()+_item.GetItem().quantity+2 <= Inventory[i].GetItem().maxStackSize)
             {
+                
                 return Inventory[i];
             }
             
@@ -306,12 +340,32 @@ public class InventroyMan : MonoBehaviour
         {
             if (originalSlot.GetItem() != null)
             {
-                if (originalSlot.GetItem() == movingSlot.GetItem() && originalSlot.GetItem().IsStackable)
+                if (originalSlot.GetItem() == movingSlot.GetItem() && originalSlot.GetItem().IsStackable && originalSlot.GetQuantity()  < originalSlot.GetItem().maxStackSize)
                 {
 
-                    originalSlot.ChangeQuantity(movingSlot.GetQuantity());
-                    movingSlot.Clear();
-                    //isMovingItem = false;   
+                    int quantityCanAdd = originalSlot.GetItem().maxStackSize - originalSlot.GetQuantity();
+                    int quantityAdding = Mathf.Clamp(movingSlot.GetQuantity(),0,quantityCanAdd);
+                    //int remainder = movingSlot.GetQuantity() - quantityAdding;
+                    
+                    originalSlot.ChangeQuantity(quantityAdding);
+                    if (movingSlot.GetQuantity() - quantityAdding <= 0) 
+                    {
+                        movingSlot.Clear();
+                    }
+                    else
+                    {
+                        movingSlot.ChangeQuantity(-quantityAdding);
+                        RefreshUI();
+                        return false;
+                    }
+
+
+
+
+                    //originalSlot.ChangeQuantity(movingSlot.GetQuantity());
+                    //movingSlot.Clear();
+                    //isMovingItem = false;
+                   // RefreshUI();
                 }
                 else
                 {
@@ -333,21 +387,30 @@ public class InventroyMan : MonoBehaviour
 
             }
         }
-        isMovingItem = false;
-        RefreshUI();
         
+        RefreshUI();
+        isMovingItem = false;
         return true;
         
     }
     private bool EndMove_Single()
     {
         originalSlot = GetClosestSlot();
-        if (originalSlot == null)//|| originalSlot.GetItem() != null && originalSlot.GetItem() != movingSlot.GetItem()
+
+     
+
+        if (originalSlot == null )//|| originalSlot.GetItem() != null && originalSlot.GetItem() != movingSlot.GetItem()
         {
             return false;
         }
-
         
+        
+        if (originalSlot.GetItem() != null && originalSlot.GetQuantity() >= originalSlot.GetItem().maxStackSize)
+        {
+            return false;
+        } 
+        
+
         if (originalSlot.GetItem() != null && originalSlot.GetItem() == movingSlot.GetItem()) 
         {
             originalSlot.ChangeQuantity(1);

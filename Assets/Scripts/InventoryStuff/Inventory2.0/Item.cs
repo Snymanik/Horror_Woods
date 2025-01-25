@@ -10,6 +10,7 @@ public abstract class Item : ScriptableObject
     public Texture Icon;
     public GameObject gobject;
     public int quantity;
+    public int maxStackSize = 64;
     public bool IsStackable = true;
     
     

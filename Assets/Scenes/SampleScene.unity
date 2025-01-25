@@ -967,7 +967,7 @@ MonoBehaviour:
   itemToRemove: {fileID: 0}
   startingItems:
   - item: {fileID: 11400000, guid: 440de815db12bdf44afabeb1d42a1ec7, type: 2}
-    quantity: 5
+    quantity: 20
 --- !u!4 &461697016 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1199035916374872671, guid: 1902b2a45d7c7a94a93dcc0125539c9c, type: 3}
