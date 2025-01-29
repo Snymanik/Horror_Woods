@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     #region Bruh
     [SerializeField]  Item checkthis;
+    CharacterController characterController;
     
     #endregion
 
@@ -51,6 +52,7 @@ public class PlayerController : MonoBehaviour
     #endregion
     void Start()
     {
+        characterController = GetComponent<CharacterController>();
        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         invPanel.SetActive(false);
@@ -180,13 +182,9 @@ public class PlayerController : MonoBehaviour
     private void CheckIfCanJump()
     {
         
-        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length*0.4f, groundLayer);
-       
-        if (isGrounded)
-        {
-            
+        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length, groundLayer);
 
-        }
+        
             
         if(isGrounded && Time.fixedTime > Timing)
         { 
