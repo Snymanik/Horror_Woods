@@ -64,19 +64,19 @@ public class ItemPickupDestroy : MonoBehaviour
                 StartCoroutine(ItemDeselection(Selected));
             }
         }
-        if (Input.GetMouseButtonDown(0))
-        {
-            
-            
-        }
-        if (Input.GetMouseButton(0))
+        
+       /* if (Input.GetMouseButton(0))
         {
            
             if (Physics.Raycast(bloedirig, out Treehit, 5, groundLayer))
             {
+                if (Treehit.collider.name != Terrain.activeTerrain.name)
+                {
+                    
+                    return;
+                }
 
-                 
-           if(Treehit.transform.gameObject != null)
+                if (Treehit.transform.gameObject != null)
                 {
                     timePassed += Time.deltaTime;
                     if (timePassed > 1)
@@ -96,14 +96,35 @@ public class ItemPickupDestroy : MonoBehaviour
                 }
                     
                 }
-            }
-
-        
-        else
+            }else
+                {
+                    tree = -1;
+                    timePassed = 0;
+                }*/
+        if (Input.GetMouseButtonDown(0)) 
         {
-            tree = -1;
-            timePassed = 0;
+            
+
+            if (Physics.Raycast(bloedirig, out Treehit))
+            {
+             
+                TreePrototype[] treePrototypes = terrain.terrainData.treePrototypes;
+                for (int i = 0; i < terrain.terrainData.treeInstances.Length; i++)
+                {
+                    TreeInstance treeInstance = terrain.terrainData.treeInstances[i];
+                    Vector3 treePosition = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
+
+                   
+                    if (Vector3.Distance(Treehit.point, treePosition) < 10.0f) 
+                    {
+                        
+                        RemoveTree(i);
+                        break;
+                    }
+                }
+            }
         }
+
     }
 
     IEnumerator ItemDeselection(Transform selected)
@@ -136,6 +157,16 @@ public class ItemPickupDestroy : MonoBehaviour
 
     }
 
+
+    void RemoveTree(int index)
+    {
+        // Create a new list of tree instances
+        List<TreeInstance> treeInstances = new List<TreeInstance>(terrain.terrainData.treeInstances);
+        treeInstances.RemoveAt(index); // Remove the tree at the specified index
+
+        // Update the terrain's tree instances
+        terrain.terrainData.treeInstances = treeInstances.ToArray();
+    }
     private Vector3 GetTree(Vector3 hitPoint)
     {
         //TreePrototype[] treePrototypes = terrain.terrainData.treePrototypes;
