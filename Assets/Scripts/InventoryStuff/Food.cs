@@ -7,8 +7,8 @@ using UnityEngine;
 public class Food : Item
 {
     [Header("Food")]
-    //public int quantity;
-    public int healthAdd;
+    [SerializeField] private int healthAdd;
+    public int healthUpdate => healthAdd; 
     public override Item GetItem() { return this; }
     public override Item GetTool() { return null; }
     public override Item GetMisc() { return null; }

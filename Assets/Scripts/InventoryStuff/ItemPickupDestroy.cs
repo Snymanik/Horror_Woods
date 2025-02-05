@@ -27,11 +27,16 @@ public class ItemPickupDestroy : MonoBehaviour
     #region ItemDestroy
     [SerializeField] 
     LayerMask groundLayer;
-    //ItemBehaviour SelDestroy;
-    public Terrain terrain;
-    int tree;
     float timePassed = 0;
+    [SerializeField]
+    Item[] Script;
+
+
+
+
     #endregion
+
+   
 
     void FixedUpdate()
     {
@@ -50,6 +55,7 @@ public class ItemPickupDestroy : MonoBehaviour
     }
     private void Update()
     {
+
         if (Input.GetKeyDown(KeyCode.E) && Selected != null)
         {
             
@@ -65,64 +71,39 @@ public class ItemPickupDestroy : MonoBehaviour
             }
         }
         
-       /* if (Input.GetMouseButton(0))
+       
+        if (Input.GetMouseButton(0)) 
         {
-           
             if (Physics.Raycast(bloedirig, out Treehit, 5, groundLayer))
             {
-                if (Treehit.collider.name != Terrain.activeTerrain.name)
+                if(Treehit.collider.gameObject != null)
                 {
-                    
-                    return;
-                }
-
-                if (Treehit.transform.gameObject != null)
-                {
-                    timePassed += Time.deltaTime;
-                    if (timePassed > 1)
-                    {
-                        timePassed = Time.deltaTime;
-
-
-                        terrain.RemoveTreesAtPosition(Treehit.transform.position,10);
-                       
-
-
-                        Debug.Log(Treehit.transform.gameObject.name);
-                        Debug.Log($"Tree at index {tree} destroyed.{Treehit.transform.position} and {GetTree(Treehit.transform.position)}");
-
-                        timePassed = 0f;
-                    }
-                }
-                    
-                }
-            }else
-                {
-                    tree = -1;
-                    timePassed = 0;
-                }*/
-        if (Input.GetMouseButtonDown(0)) 
-        {
-            
-
-            if (Physics.Raycast(bloedirig, out Treehit))
-            {
-             
-                TreePrototype[] treePrototypes = terrain.terrainData.treePrototypes;
-                for (int i = 0; i < terrain.terrainData.treeInstances.Length; i++)
-                {
-                    TreeInstance treeInstance = terrain.terrainData.treeInstances[i];
-                    Vector3 treePosition = Vector3.Scale(treeInstance.position, terrain.terrainData.size) + terrain.transform.position;
-
-                   
-                    if (Vector3.Distance(Treehit.point, treePosition) < 10.0f) 
+                  
+                    if (Treehit.collider.CompareTag("Tree"))
                     {
                         
-                        RemoveTree(i);
-                        break;
+                        timePassed += Time.deltaTime;
+                        if (timePassed > 25)
+                        {
+
+                            Destroy(Treehit.collider.gameObject);
+                            GameObject Drops = Instantiate(Script[0].GetItem().gobject,this.gameObject.transform.position, Quaternion.identity);
+                            Drops.GetComponent<ItemPrefabScript>().scriptibleObjectType = Script[0];
+
+                            timePassed = 0;
+                            return;
+                            
+                        }
                     }
                 }
+                
             }
+            
+
+        }
+        else
+        {
+            timePassed = 0;
         }
 
     }
@@ -158,40 +139,7 @@ public class ItemPickupDestroy : MonoBehaviour
     }
 
 
-    void RemoveTree(int index)
-    {
-        // Create a new list of tree instances
-        List<TreeInstance> treeInstances = new List<TreeInstance>(terrain.terrainData.treeInstances);
-        treeInstances.RemoveAt(index); // Remove the tree at the specified index
+    
 
-        // Update the terrain's tree instances
-        terrain.terrainData.treeInstances = treeInstances.ToArray();
-    }
-    private Vector3 GetTree(Vector3 hitPoint)
-    {
-        //TreePrototype[] treePrototypes = terrain.terrainData.treePrototypes;
-        TreeInstance[] treeInstances = terrain.terrainData.treeInstances;
 
-       
-        
-            for(int i = 0; i < treeInstances.Length; i++)
-            {
-            Vector3 treePosition = treeInstances[i].position;
-            // Convert the tree position to world space
-            treePosition.x *= terrain.terrainData.size.x;
-            treePosition.z *= terrain.terrainData.size.z;
-            treePosition += terrain.transform.position;
-
-            if (Vector3.Distance(hitPoint, treePosition) < 50.0f) 
-            {
-               return treePosition;
-            }
-        }
-            
-        
-
-        return new Vector3(0,-100,0);
-    }
-
-   
 }

@@ -14,12 +14,15 @@ public class InventroyMan : MonoBehaviour
     [SerializeField] private SlotTrait selectedItem;
     private bool itemSelect;
 
+    public Item Hotbar; 
+
     [SerializeField] private GameObject slotHolder ;
     [SerializeField] private Item itemToAdd ;
     [SerializeField] private Item itemToRemove ;
     private GameObject[] slots;
 
-
+    [SerializeField] GameObject furnaceSlot;
+    [SerializeField] FurnaceController furnaceController;
 
     [SerializeField] private SlotTrait[] startingItems;
     private SlotTrait[] Inventory;
@@ -28,6 +31,11 @@ public class InventroyMan : MonoBehaviour
     private SlotTrait tempSlot;
     private SlotTrait originalSlot;
     bool isMovingItem;
+
+
+    const float baseWidth = 3840f;
+    const float baseHeight = 2160;
+    float scaleFactor = Mathf.Min(Screen.width / baseWidth, Screen.height / baseHeight);
     private void Start()
     {
             
@@ -52,9 +60,6 @@ public class InventroyMan : MonoBehaviour
             AddToInventory(startingItems[i].GetItem(), startingItems[i].GetQuantity());
            
         }
-
-        
-
         RefreshUI();
 
 
@@ -66,6 +71,9 @@ public class InventroyMan : MonoBehaviour
     }
     private void Update()
     {
+        //Add the hotbar shit
+
+
         if (Input.GetKeyUp(KeyCode.L))
         {
             itemSelect = !itemSelect;
@@ -209,23 +217,14 @@ public class InventroyMan : MonoBehaviour
                             AddToInventory(Item, remain);
 
                         }
-
-
-
-
-
-
                         // break ;
                         RefreshUI();
                         return;
-                        
-
                     }
                     
                     
                 }
-                // instnatiate smth
-               
+                             
                     GameObject spawnedObject = Instantiate(Item.GetItem().gobject, player.position, Quaternion.identity);
                     spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = Item;
                     spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = quantity;
@@ -244,42 +243,19 @@ public class InventroyMan : MonoBehaviour
         //SlotTrait temp = Contains(Item);
         if (Item != null)
         {
-            //if(Item.GetQuantity() > 1)
-            //{
-            //    Item.ChangeQuantity(-1);
-               
-            //}
-            //else
-            //{
-                //int slotRemoveIndex = 0;
-                //for(int i = 0;i< Inventory.Length;i++)
-                //{
-
-
-                //    if (Inventory[i].GetItem() == Item)
-                //    {
-                //        slotRemoveIndex = i;
-                //        break;
-                //    }
-                //}
-                //Inventory[slotRemoveIndex].Clear();
+           
                 RefreshUI();
                 GameObject spawnedObject = Instantiate(Item.GetItem().gobject, player.position, Quaternion.identity);
                 spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = Item.GetItem();
                 spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = Item.GetQuantity();
                 Item.Clear();
-            //}
+            
             
         }
         else
         {
             Debug.Log("No item in inventory");
         }
-
-
-
-          
-
         RefreshUI();
     }
     
@@ -350,6 +326,19 @@ public class InventroyMan : MonoBehaviour
 
         if(originalSlot == null)
         {
+            if (FurnaceUI() && movingSlot.GetItem().itemName == "Bread")
+            {
+                movingSlot = furnaceController.AddFuel(movingSlot);
+
+                if(movingSlot != null)
+                {
+                    AddToInventory(movingSlot.GetItem(), movingSlot.GetQuantity());
+
+                }
+                RefreshUI();
+                isMovingItem = false;
+                return true;
+            }
             // AddToInventory(movingSlot.GetItem(), movingSlot.GetQuantity());  DEPENDS IF YOU WANT IT VBAC
             GameObject spawnedObject = Instantiate(movingSlot.GetItem().gobject, player.position, Quaternion.identity);
              spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = movingSlot.GetItem();
@@ -477,18 +466,6 @@ public class InventroyMan : MonoBehaviour
     }
     private SlotTrait GetClosestSlot()
     {
-
-         float baseWidth = 3840f; 
-        float baseHeight = 2160; 
-
-
-        float scaleFactor = Mathf.Min(Screen.width / baseWidth, Screen.height / baseHeight);
-
-
-        
-
-       
-
         for (int i = 0; i < slots.Length; i++)
         {
             if (Vector2.Distance(Input.mousePosition, slots[i].transform.position) < 120 * scaleFactor)
@@ -496,10 +473,19 @@ public class InventroyMan : MonoBehaviour
                 return Inventory[i];
             }
 
-
         }
 
         return null;
+    }
+
+
+    private bool FurnaceUI()
+    {
+        if(Vector2.Distance(Input.mousePosition,furnaceSlot.transform.position) < 120 * scaleFactor)
+        {
+            return true;
+        }
+        return false;
     }
 
     #endregion Movement

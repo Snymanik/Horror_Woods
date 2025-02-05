@@ -95,10 +95,9 @@ GameObject:
   - component: {fileID: 4465860574682440742}
   - component: {fileID: 3065300696868997439}
   - component: {fileID: 3275975674698241279}
-  - component: {fileID: 5362958684960766239}
   m_Layer: 6
   m_Name: DemoSpruce
-  m_TagString: Untagged
+  m_TagString: Tree
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 16
@@ -133,7 +132,7 @@ LODGroup:
   m_AnimateCrossFading: 0
   m_LastLODIsBillboard: 0
   m_LODs:
-  - screenRelativeHeight: 0.09400899
+  - screenRelativeHeight: 0.54531384
     fadeTransitionWidth: 0
     renderers:
     - renderer: {fileID: 5956040741380252971}
@@ -161,17 +160,3 @@ CapsuleCollider:
   m_Height: 46.725887
   m_Direction: 1
   m_Center: {x: 0, y: 22.862944, z: 0}
---- !u!114 &5362958684960766239
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7488343770391138834}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9fc4a1bac2efeca4d81da42a3965faf3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  health: 10
-  item: {fileID: 4791673135835978387, guid: 140d146049fb2d948974d4de45314261, type: 3}

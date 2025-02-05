@@ -8,6 +8,8 @@ public class Tool : Item
 {
     [Header("Tool")]
     //Should I do private and do getter and setter
+    [SerializeField] private float ToolEfficiency; 
+    public float ToolEff => ToolEfficiency;
     public ToolType Tooltype;
 
     public enum ToolType
@@ -18,6 +20,7 @@ public class Tool : Item
         Torch
 
     }
+     
 
     public override Item GetItem() { return this;  }
     public override Item GetTool() { return this; }

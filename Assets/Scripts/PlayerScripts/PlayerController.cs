@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -10,14 +11,18 @@ public class PlayerController : MonoBehaviour
     #region Bruh
     [SerializeField]  Item checkthis;
     CharacterController characterController;
-    
+
     #endregion
 
+    #region Interaction
+    Ray interact;
+    RaycastHit hit;
     [SerializeField]
-    GameObject camera_;
-    
-    public Vector3 dir;
-    
+    LayerMask function;
+    public bool furnaceOpened = false;
+    [SerializeField] private GameObject furnacePanel;
+    #endregion
+
     #region Sprinting
     bool keyProblemSolver = true;
     bool isSprinting;
@@ -29,13 +34,15 @@ public class PlayerController : MonoBehaviour
     #region CameraMovement
     float MouseX, MouseY,xRotation,yRotation;
     [SerializeField]
+    GameObject camera_;
+    public Vector3 dir;
+    [SerializeField]
     float sensitivity;
     #endregion
     #region Jumping
     bool isGrounded;
     float Timing;
-    [SerializeField]
-    LayerMask groundLayer;
+    
     [SerializeField]
     float jumpCooldown,length;
     #endregion
@@ -56,6 +63,7 @@ public class PlayerController : MonoBehaviour
        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
         invPanel.SetActive(false);
+        furnacePanel.SetActive(false);
         rb = GetComponent<Rigidbody>();
     }
 
@@ -67,8 +75,9 @@ public class PlayerController : MonoBehaviour
         MouseY = Input.GetAxis("Mouse Y");
         MouseX = Input.GetAxis("Mouse X");
         isSprinting= Input.GetKey(KeyCode.R);
+        interact = Camera.main.ScreenPointToRay(Input.mousePosition);
         //MouseY = Mathf.Clamp(MouseY, -90, 90);
-        
+
 
 
         xRotation -= MouseY * Time.deltaTime * sensitivity;
@@ -134,8 +143,23 @@ public class PlayerController : MonoBehaviour
             Cursor.visible = false;
             inventoryOpen = false;
             invPanel.SetActive(false);
+
+            if (furnaceOpened)
+            {
+                furnaceOpened = false;  
+                furnacePanel.SetActive(false);
+            }
+
         }
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            OpenSmth();
+        }
+
     }
+
+    
 
     IEnumerator SprintingMode()
     {
@@ -170,23 +194,20 @@ public class PlayerController : MonoBehaviour
     private void SpeedControl()
     {
          Vector3 SpeedControl = new Vector3(rb.velocity.x,0,rb.velocity.z);
-        if(rb.velocity.magnitude > 7 && isGrounded)
+        if(rb.velocity.magnitude > 7 && characterController.isGrounded)
         {
             SpeedControl = SpeedControl.normalized * 7;
             rb.velocity = new Vector3(SpeedControl.x,rb.velocity.y,SpeedControl.z);
-        }
-        
-            
-        
+        } 
     }
     private void CheckIfCanJump()
     {
-        
-        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length, groundLayer);
 
-        
-            
-        if(isGrounded && Time.fixedTime > Timing)
+
+
+        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length * 0.4f);
+
+        if (isGrounded && Time.fixedTime > Timing)
         { 
             rb.AddForce(Vector3.up * 5,ForceMode.Impulse);
 
@@ -197,12 +218,31 @@ public class PlayerController : MonoBehaviour
 
             Timing = Time.fixedTime +jumpCooldown;
         }
+        
      
     }
 
     //idk what i am doing
-   // public int Quantity;
+    // public int Quantity;
+    private void OpenSmth()
+    {
+        if (Physics.Raycast(interact,out hit, 5,function))
+        {
+            if(hit.collider != null)
+            {
+                if (hit.collider.gameObject.CompareTag("Furnace"))
+                {
+                    Cursor.lockState = CursorLockMode.None;
+                    Cursor.visible = true;
+                    furnaceOpened = true;
+                    inventoryOpen = true;
+                    invPanel.SetActive(true);
+                    furnacePanel.SetActive(true);
 
+                }
+            }
+        }
+    }
     public void AddObject(Item InvContr)
     {
 
