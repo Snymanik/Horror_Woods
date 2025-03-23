@@ -19,4 +19,5 @@ MonoBehaviour:
   quantity: 1
   maxStackSize: 2
   IsStackable: 0
+  ToolEfficiency: 2
   Tooltype: 0

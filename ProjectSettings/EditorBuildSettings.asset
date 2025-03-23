@@ -4,5 +4,8 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/Woodlands.unity
+    guid: 5bdd607a2a231c944bd6cbb7c81df504
   m_configObjects: {}

@@ -2,7 +2,6 @@ using sc.terrain.vegetationspawner;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using TreeEditor;
 using Unity.VisualScripting;
 using Unity.VisualScripting.Antlr3.Runtime.Tree;
 using UnityEngine;
@@ -31,7 +30,8 @@ public class ItemPickupDestroy : MonoBehaviour
     [SerializeField]
     Item[] Script;
 
-
+    
+    
 
 
     #endregion
@@ -58,9 +58,11 @@ public class ItemPickupDestroy : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E) && Selected != null)
         {
+
+           
             
-           // Debug.Log(Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType + "  " + Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity);
             invManager.GetComponent<InventroyMan>().AddToInventory(Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType, Selected.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity);
+            invManager.GetComponent<InventroyMan>().torchLocations.Remove(Selected.gameObject.transform);
             Destroy(Selected.gameObject);
 
         }else
@@ -83,7 +85,9 @@ public class ItemPickupDestroy : MonoBehaviour
                     {
                         
                         timePassed += Time.deltaTime;
-                        if (timePassed > 25)
+                        
+
+                        if (timePassed > 25 - invManager.GetComponent<InventroyMan>().toolEfficency)
                         {
 
                             Destroy(Treehit.collider.gameObject);

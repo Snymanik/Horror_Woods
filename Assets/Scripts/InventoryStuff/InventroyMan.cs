@@ -11,10 +11,29 @@ public class InventroyMan : MonoBehaviour
 
     [SerializeField] private GameObject itemCursor;
     [SerializeField] private Transform player;
-    [SerializeField] private SlotTrait selectedItem;
-    private bool itemSelect;
+    
+    
 
-    public Item Hotbar; 
+    #region Hotbar
+
+    [SerializeField] GameObject itemHeld;
+    
+    [SerializeField] GameObject torch;
+    #endregion
+
+    
+    float temperature = 90;
+    public List<Transform> torchLocations = new List<Transform>();
+    [SerializeField] RawImage thermometer;
+    [SerializeField] Text tempNum;
+    [SerializeField] Texture[] icons = new Texture[3];
+    bool tempChecker;
+    [SerializeField] RawImage FreezeEffect;
+    bool freezing = false;
+    private Coroutine activeTempCoroutine = null;
+    private Coroutine freezingTransCouroutine = null;
+
+
 
     [SerializeField] private GameObject slotHolder ;
     [SerializeField] private Item itemToAdd ;
@@ -23,6 +42,7 @@ public class InventroyMan : MonoBehaviour
 
     [SerializeField] GameObject furnaceSlot;
     [SerializeField] FurnaceController furnaceController;
+    
 
     [SerializeField] private SlotTrait[] startingItems;
     private SlotTrait[] Inventory;
@@ -32,16 +52,14 @@ public class InventroyMan : MonoBehaviour
     private SlotTrait originalSlot;
     bool isMovingItem;
 
+    public int toolEfficency = 0;
 
     const float baseWidth = 3840f;
     const float baseHeight = 2160;
     float scaleFactor = Mathf.Min(Screen.width / baseWidth, Screen.height / baseHeight);
     private void Start()
     {
-            
-       
-
-
+        activeTempCoroutine = StartCoroutine(TempDecrease());
         slots = new GameObject[slotHolder.transform.childCount];
         Inventory = new SlotTrait[slots.Length];
         for(int i = 0;i< Inventory.Length; i++)
@@ -66,26 +84,21 @@ public class InventroyMan : MonoBehaviour
         AddToInventory(itemToAdd, itemToAdd.GetItem().quantity);
         //RemoveFromInventory(itemToRemove);
 
-        
 
+
+        torch.SetActive(false);
+
+        
     }
     private void Update()
     {
         //Add the hotbar shit
+        TemperaturCheck();
+        ThermometeController();
 
-
-        if (Input.GetKeyUp(KeyCode.L))
-        {
-            itemSelect = !itemSelect;
-        }
-        if (itemSelect)
-        {
-            selectedItem = Inventory[15];
-        }
-        else
-        {
-            selectedItem = null;
-        }
+        
+        
+        
 
 
 
@@ -97,6 +110,10 @@ public class InventroyMan : MonoBehaviour
             if (movingSlot.GetItem().IsStackable)
             {
                 itemCursor.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = movingSlot.GetQuantity().ToString();
+            }
+            else
+            {
+                itemCursor.transform.GetChild(0).GetComponent<TextMeshProUGUI>().text = "";
             }
             
         }
@@ -134,6 +151,10 @@ public class InventroyMan : MonoBehaviour
            RemoveFromInventory( GetClosestSlot());
 
         }
+        if(temperature < 0)
+        {
+            Debug.Log("Ur ded fam");
+        }
     }
 
     #region Inv Utils
@@ -155,7 +176,7 @@ public class InventroyMan : MonoBehaviour
                 else
                     slots[i].transform.GetChild(1).GetComponent<TextMeshProUGUI>().text = "";
 
-
+                
 
             }
             catch
@@ -166,6 +187,49 @@ public class InventroyMan : MonoBehaviour
             }
 
             
+        }
+        if (Inventory[15].GetItem() != null)
+        {
+            if (Inventory[15].GetItem().itemName == "Torch")
+            {
+                torch.SetActive(true);
+                
+                itemHeld.GetComponent<MeshFilter>().mesh = null;
+            }
+            else
+            {
+                itemHeld.GetComponent<MeshRenderer>().materials = Inventory[15].GetItem().gobject.GetComponent<MeshRenderer>().sharedMaterials;
+                itemHeld.GetComponent<MeshFilter>().mesh = Inventory[15].GetItem().gobject.GetComponent<MeshFilter>().sharedMesh;
+                torch.SetActive(false);
+            }
+            if (!Inventory[15].GetItem().IsStackable)
+            {
+                itemHeld.transform.localScale = new Vector3(2, 2, 2);
+                itemHeld.transform.localEulerAngles = new Vector3(0, -90, 90);
+                if (Inventory[15].GetItem().itemName == "Chainsaw")
+                {
+                    itemHeld.transform.localEulerAngles = new Vector3(-90, 0, 90);
+                }
+                
+            }
+            else
+            {
+                itemHeld.transform.localScale = new Vector3(4, 4, 4);
+                itemHeld.transform.localEulerAngles = new Vector3(0, -90, 90); 
+            }
+            if (Inventory[15].GetItem().GetTool() != null)
+            {
+                Tool tool = Inventory[15].GetItem().GetTool() as Tool;
+                toolEfficency = (int)tool.ToolEff;
+                
+                
+            }
+        }
+        else
+        {
+            itemHeld.GetComponent<MeshFilter>().mesh = null;
+            torch.SetActive(false);
+            toolEfficency = 0;
         }
 
     }
@@ -202,15 +266,12 @@ public class InventroyMan : MonoBehaviour
                 {
                     if (Inventory[i].GetItem() == null)
                     {
-
-                        
-
-
                         int quantityCanAdd = Item.GetItem().maxStackSize - quantity;
                         int maxCanAdd = Mathf.Clamp(quantity, 0, quantityCanAdd);
                         int remain = quantity - maxCanAdd;
 
                         Inventory[i] = new SlotTrait(Item, maxCanAdd);
+                        
                         
                         if (remain > 0)
                         {
@@ -228,8 +289,10 @@ public class InventroyMan : MonoBehaviour
                     GameObject spawnedObject = Instantiate(Item.GetItem().gobject, player.position, Quaternion.identity);
                     spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = Item;
                     spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = quantity;
-                
-
+                    if (Item.GetItem().itemName == "Torch")
+                    {
+                        torchLocations.Add(spawnedObject.transform);
+                    }
 
             }
             RefreshUI();
@@ -280,9 +343,7 @@ public class InventroyMan : MonoBehaviour
     #region Movement
     private bool ItemMove()
     {
-        
 
-        
         originalSlot = GetClosestSlot();
         if(originalSlot == null || originalSlot.GetItem() == null)
         {
@@ -326,7 +387,7 @@ public class InventroyMan : MonoBehaviour
 
         if(originalSlot == null)
         {
-            if (FurnaceUI() && movingSlot.GetItem().itemName == "Bread")
+            if (FurnaceUI() && movingSlot.GetItem().itemName == "Wood")
             {
                 movingSlot = furnaceController.AddFuel(movingSlot);
 
@@ -343,8 +404,11 @@ public class InventroyMan : MonoBehaviour
             GameObject spawnedObject = Instantiate(movingSlot.GetItem().gobject, player.position, Quaternion.identity);
              spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType = movingSlot.GetItem();
             spawnedObject.GetComponent<ItemPrefabScript>().scriptibleObjectType.GetItem().quantity = movingSlot.GetQuantity();
-
-
+            if(movingSlot.GetItem().itemName == "Torch")
+            {
+                torchLocations.Add(spawnedObject.transform);
+            }
+            
             movingSlot.Clear();
             
         }
@@ -395,6 +459,7 @@ public class InventroyMan : MonoBehaviour
                 // isMovingItem = false;
 
             }
+
         }
         
         RefreshUI();
@@ -449,20 +514,9 @@ public class InventroyMan : MonoBehaviour
             isMovingItem = true;
         }
 
-
-        
-        //else
-        //{
-        //    movingSlot = new SlotTrait(originalSlot);
-        //    originalSlot.Clear();
-        //}
-
         
         RefreshUI();
         return true;
-
-
-
     }
     private SlotTrait GetClosestSlot()
     {
@@ -477,8 +531,6 @@ public class InventroyMan : MonoBehaviour
 
         return null;
     }
-
-
     private bool FurnaceUI()
     {
         if(Vector2.Distance(Input.mousePosition,furnaceSlot.transform.position) < 120 * scaleFactor)
@@ -490,4 +542,165 @@ public class InventroyMan : MonoBehaviour
 
     #endregion Movement
 
+    #region TemperatureLogic
+    private IEnumerator TempIncrease()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(3f);
+            if (temperature < 90)
+            {
+                temperature++;
+            }
+        }    
+
+        
+    }
+    private IEnumerator TempDecrease()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(12f);
+            temperature--;
+        }
+            
+            
+        
+    }
+    private void TemperaturCheck()
+    {
+        
+            if (Inventory[15].GetItem() != null && Inventory[15].GetItem().itemName == "Torch")
+            {
+                if (!tempChecker)
+                {
+                StopActiveCoroutine();
+                activeTempCoroutine = StartCoroutine(TempIncrease());
+                    
+                    tempChecker = true;
+                }
+
+            }
+            else
+            {
+                foreach (Transform t in torchLocations)
+                {
+
+                    if (Vector3.Distance(player.position, t.position) < 10)
+                    {
+                        if (!tempChecker)
+                        {
+
+                        StopActiveCoroutine();
+                        activeTempCoroutine = StartCoroutine(TempIncrease());
+                            
+                            tempChecker = true;
+                        }
+                        
+                        return;
+
+                    }
+                    
+                
+                }
+                    if (tempChecker)
+                    {
+                    StopActiveCoroutine();
+                    activeTempCoroutine = StartCoroutine(TempDecrease());
+                        
+
+                        tempChecker = false;
+                    }
+            }
+            
+        
+        
+       
+        
+    }
+    private void StopActiveCoroutine()
+    {
+        if (activeTempCoroutine != null)
+        {
+            StopCoroutine(activeTempCoroutine);
+            activeTempCoroutine = null;
+        }
+    }
+
+    private void ThermometeController()
+    {
+        
+        tempNum.text = (Mathf.Round((temperature / 30 + 35)*10)/10).ToString();
+        if(temperature >= 60)
+        {
+         thermometer.texture = icons[0];
+        }
+        else if(temperature < 60 &&  temperature > 30)
+        {
+         thermometer.texture = icons[1];
+            if (freezing)
+            {
+                StopFreezeTrans();
+                freezingTransCouroutine = StartCoroutine(DefrostingTransition());
+
+                freezing = false;
+            }
+
+        }
+        else
+        {
+            
+            thermometer.texture = icons[2];
+            if (!freezing) 
+            {
+                StopFreezeTrans();
+                freezingTransCouroutine = StartCoroutine(FreezingTransition());
+                freezing = true;
+            }
+        }
+        
+    }
+    private void StopFreezeTrans()
+    {
+        if (freezingTransCouroutine != null)
+        {
+            StopCoroutine(freezingTransCouroutine);
+            freezingTransCouroutine = null;
+        }
+    }
+    private IEnumerator FreezingTransition()
+    {
+        
+        Color Fcolor = FreezeEffect.color;
+        while(Fcolor.a < 1)
+        {
+            
+                yield return new WaitForSeconds(0.05f);
+                Fcolor.a += Time.deltaTime;
+                FreezeEffect.color = Fcolor;
+            
+            
+
+        }
+        
+    }
+    private IEnumerator DefrostingTransition()
+    {
+
+        Color Fcolor = FreezeEffect.color;
+        while (Fcolor.a > 0)
+        {
+            
+                yield return new WaitForSeconds(0.05f);
+                Fcolor.a -= Time.deltaTime;
+                FreezeEffect.color = Fcolor;
+                
+            
+            
+        }
+        
+    }
+
+
+    #endregion
 }

@@ -57,6 +57,16 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject invPanel;
 
     #endregion
+
+    #region SoundParameters
+    public AudioSource audioSource;
+    [SerializeField] private AudioClip[] grassSteps;
+    [SerializeField] private AudioClip[] jumpingSound;
+    private const float stepInterval = 0.5f;
+    private  float timeStamp;
+    private const float velocityThreshold = 1f;
+
+    #endregion
     void Start()
     {
         characterController = GetComponent<CharacterController>();
@@ -105,7 +115,7 @@ public class PlayerController : MonoBehaviour
         if (isSprinting && keyProblemSolver && stamina >= 1)
         {
             keyProblemSolver = false;
-            speed += 10f;
+            speed += 20f;
             //StopCoroutine(SprintingMode(1));
             StopAllCoroutines();
             StartCoroutine(SprintingMode());
@@ -114,7 +124,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (!isSprinting && !keyProblemSolver || stamina <= 0 && !keyProblemSolver)
         {
-            speed -= 10f;
+            speed -= 20f;
             //StartCoroutine(SprintingMode(1));
             StopAllCoroutines();
             StartCoroutine(SprintingOff());
@@ -126,6 +136,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length * 0.5f);
         if (Input.GetKeyDown(KeyCode.P))
         {
             AddObject(checkthis);
@@ -157,6 +168,32 @@ public class PlayerController : MonoBehaviour
             OpenSmth();
         }
 
+        CheckMove();
+    }
+
+    private void CheckMove()
+    {
+      
+        if (isGrounded && rb.velocity.magnitude > velocityThreshold)
+        {
+            if (isSprinting)
+            {
+                timeStamp -= 1.4f*Time.deltaTime;
+            }
+            else
+            {
+                timeStamp -= Time.deltaTime;
+            }
+
+            if (timeStamp <= 0)
+            {
+                audioSource.PlayOneShot(grassSteps[UnityEngine.Random.Range(0, grassSteps.Length - 1)]);
+                timeStamp = stepInterval;
+
+            }
+
+
+        }
     }
 
     
@@ -178,7 +215,7 @@ public class PlayerController : MonoBehaviour
     IEnumerator SprintingOff( )
     {
         yield return new WaitForSeconds(3);
-        if (stamina < 10)
+        if (stamina < 20)
         {
             stamina += 1;
         }
@@ -205,14 +242,16 @@ public class PlayerController : MonoBehaviour
 
 
 
-        isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length * 0.4f);
+        
 
-        if (isGrounded && Time.fixedTime > Timing)
+        if (isGrounded & Time.fixedTime > Timing)
         { 
             rb.AddForce(Vector3.up * 5,ForceMode.Impulse);
 
-            Vector3 AirControll = new Vector3(rb.velocity.x, 0, rb.velocity.z);
-                
+            audioSource.PlayOneShot(jumpingSound[UnityEngine.Random.Range(0, jumpingSound.Length - 1)]);
+             
+
+            Vector3 AirControll = new Vector3(rb.velocity.x, 0, rb.velocity.z);   
                 AirControll = AirControll.normalized * 0.1f;
             rb.velocity = new Vector3(AirControll.x, rb.velocity.y, AirControll.z);
 
