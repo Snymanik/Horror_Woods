@@ -27,17 +27,15 @@ public class MonsterAI : MonoBehaviour
 
     void Start()
     {
+        
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(SearchRoutine());
     }
 
     void Update()
     {
-        if (currentState == State.Searching)
-        {
-            LookForPlayer();
-        }
-        else if (currentState == State.Chasing)
+        
+        if (currentState == State.Chasing)
         {
             agent.SetDestination(player.position);
         }
@@ -57,11 +55,11 @@ public class MonsterAI : MonoBehaviour
         for (int i = -1; i <= 1; i++) // Looks left, center, and right
         {
             Vector3 direction = Quaternion.Euler(0, i * detectionAngle / 2, 0) * transform.forward;
-            if (Physics.SphereCast(transform.position, 2f, direction, out RaycastHit hit, detectionRange))
+            if (Physics.SphereCast(transform.position, 2f, direction, out RaycastHit hit, detectionRange)) // CHECK THIS
             {
                 if (hit.transform == player)
                 {
-                    if (Random.value < aggressionLevel)
+                    if (Random.Range(1,10) < aggressionLevel)
                     {
                         StartCoroutine(ChasePlayer());
                     }
@@ -79,10 +77,12 @@ public class MonsterAI : MonoBehaviour
     {
         while (currentState == State.Searching)
         {
-            agent.SetDestination(GetRandomNavMeshPosition());
+
+            agent.SetDestination(GetRandomNavMeshPosition(transform.position)); // check
+            LookForPlayer();
             yield return new WaitForSeconds(5f);
 
-            if (canTeleport > Random.Range(4,7))
+            if (canTeleport > Random.Range(5,13))
             {
                 canTeleport = 0;
                 TeleportNearPlayer();
@@ -90,7 +90,9 @@ public class MonsterAI : MonoBehaviour
             }
             else
             {
+                yield return new WaitForSeconds(1f);
                 canTeleport++;
+                LookForPlayer();
             }
         }
     }
@@ -131,18 +133,18 @@ public class MonsterAI : MonoBehaviour
 
     void TeleportNearPlayer()
     {
-        Vector3 teleportPos = player.position + new Vector3(Random.Range(-teleportRadius, teleportRadius), 0, Random.Range(-teleportRadius, teleportRadius));
-        transform.position = GetRandomNavMeshPosition(teleportPos);
+        
+        transform.position = GetRandomNavMeshPosition(player.position);
     }
 
     void TeleportRandomly()
     {
-        transform.position = GetRandomNavMeshPosition();
+        transform.position = GetRandomNavMeshPosition(transform.position);
     }
 
-    Vector3 GetRandomNavMeshPosition(Vector3? nearPosition = null)
+    Vector3 GetRandomNavMeshPosition(Vector3 nearPosition)
     {
-        Vector3 randomPoint = nearPosition ?? new Vector3(Random.Range(-teleportRadius, teleportRadius), 0, Random.Range(-teleportRadius, teleportRadius));
+        Vector3 randomPoint =  new Vector3(Random.Range(-teleportRadius, teleportRadius) + nearPosition.x, 1 + nearPosition.y, Random.Range(-teleportRadius, teleportRadius) + nearPosition.z);
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 10f, NavMesh.AllAreas))
         {
