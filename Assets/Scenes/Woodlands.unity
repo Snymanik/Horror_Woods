@@ -175397,7 +175397,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 0
   m_VoxelSize: 0.16666667
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 0}
+  m_NavMeshData: {fileID: 23800000, guid: e5fc7b87bd98b5c4381a2e736a604fee, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &1703287321
 GameObject:
@@ -221296,6 +221296,15 @@ MonoBehaviour:
   jumpingSound:
   - {fileID: 8300000, guid: c025c43d1749af5469c7dd8af13e162f, type: 3}
   - {fileID: 8300000, guid: 65713fdea647c1949961f91d42bed416, type: 3}
+  soundClips:
+  - {fileID: 8300000, guid: b2640994297419d49a33692783b5ab51, type: 3}
+  - {fileID: 8300000, guid: 5d12f0d64a906384bb707db97d05968f, type: 3}
+  - {fileID: 8300000, guid: 748ec2508c05d2942a7632a78a4347e3, type: 3}
+  - {fileID: 8300000, guid: d3663ae976dc2994b93bae402e0f64ad, type: 3}
+  - {fileID: 8300000, guid: 6a5f45bc33a681847a34b9e4e5e9e0d7, type: 3}
+  growlClip:
+  - {fileID: 8300000, guid: 96a2f6f95f4994aceb198857afee6516, type: 3}
+  - {fileID: 8300000, guid: 6811bbd09dedb497ea07997567b158c2, type: 3}
 --- !u!114 &2108188623
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -221318,6 +221327,8 @@ MonoBehaviour:
     m_Bits: 64
   Script:
   - {fileID: 11400000, guid: 33979a7bd476e7f46901a774a0a6033e, type: 2}
+  MC: {fileID: 8300000, guid: c92fd58ac6b91794ba82b93ef3f4e00e, type: 3}
+  MCSource: {fileID: 2108188628}
 --- !u!114 &2108188624
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -230836,7 +230847,7 @@ Transform:
   m_GameObject: {fileID: 919132149396056112}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 387.95557, y: 0.859, z: 169.54}
+  m_LocalPosition: {x: 388.69, y: 0.859, z: 169.54}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -231076,6 +231087,7 @@ GameObject:
   - component: {fileID: 919132149396056115}
   - component: {fileID: 919132149396056114}
   - component: {fileID: 919132149396056113}
+  - component: {fileID: 919132149396056117}
   m_Layer: 0
   m_Name: Wendigo
   m_TagString: Untagged
@@ -231122,7 +231134,7 @@ AudioSource:
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 96
+  Priority: 82
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -231321,6 +231333,34 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
+--- !u!114 &919132149396056117
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 919132149396056112}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a871f5e7bf5e1b4b864b16194de6188, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 2108188621}
+  detectionRange: 20
+  teleportRadius: 100
+  chaseDuration: 10
+  menacingDuration: 5
+  teleportCooldown: 5
+  aggressionIncrease: 0.1
+  maxAggression: 1
+  animator: {fileID: 919132149396056113}
+  roarSound: {fileID: 919132149396056114}
+  playerMask:
+    serializedVersion: 2
+    m_Bits: 8
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &950778532467570792
 GameObject:
   m_ObjectHideFlags: 0

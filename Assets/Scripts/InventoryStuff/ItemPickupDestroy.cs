@@ -30,13 +30,17 @@ public class ItemPickupDestroy : MonoBehaviour
     [SerializeField]
     Item[] Script;
 
-    
-    
+
+
 
 
     #endregion
 
-   
+    #region Sound
+    [SerializeField] AudioClip MC;
+    [SerializeField] AudioSource MCSource;
+    float soundTimer = 0; 
+    #endregion
 
     void FixedUpdate()
     {
@@ -83,8 +87,13 @@ public class ItemPickupDestroy : MonoBehaviour
                   
                     if (Treehit.collider.CompareTag("Tree"))
                     {
-                        
+                        soundTimer += Time.deltaTime;
                         timePassed += Time.deltaTime;
+                        if (soundTimer >= 1)
+                        {
+                            MCSource.PlayOneShot(MC);
+                            soundTimer = 0;
+                        }
                         
 
                         if (timePassed > 25 - invManager.GetComponent<InventroyMan>().toolEfficency)
@@ -95,6 +104,7 @@ public class ItemPickupDestroy : MonoBehaviour
                             Drops.GetComponent<ItemPrefabScript>().scriptibleObjectType = Script[0];
 
                             timePassed = 0;
+                            soundTimer = 0;
                             return;
                             
                         }
@@ -108,6 +118,7 @@ public class ItemPickupDestroy : MonoBehaviour
         else
         {
             timePassed = 0;
+            soundTimer = 0;
         }
 
     }

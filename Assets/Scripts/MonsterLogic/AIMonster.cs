@@ -1,6 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Random = UnityEngine.Random;
 
 public class MonsterAI : MonoBehaviour
 {
@@ -9,14 +11,14 @@ public class MonsterAI : MonoBehaviour
 
     public Transform player;
     public float detectionRange = 20f;
-    public float teleportRadius = 100f;
+    public float teleportRadius = 100;
     public float chaseDuration = 10f;
     public float menacingDuration = 5f;
     public float teleportCooldown = 5f;
     public float aggressionIncrease = 0.1f;
     public float maxAggression = 1.0f;
 
-    private float detectionAngle = 90f;
+    private float detectionAngle = 120f;
     private NavMeshAgent agent;
     private float aggressionLevel = 0f;
     private int canTeleport = 0;
@@ -25,9 +27,15 @@ public class MonsterAI : MonoBehaviour
     [SerializeField] private Animator animator;
     [SerializeField] private AudioSource roarSound;
 
+
+    private float viewRadius = 30;
+    private float viewAngle = 45;
+    [SerializeField] LayerMask playerMask, obstacleMask;
+
+
     void Start()
     {
-        
+        GetComponent<Animator>().applyRootMotion = false;
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(SearchRoutine());
     }
@@ -42,35 +50,64 @@ public class MonsterAI : MonoBehaviour
 
         if (agent.velocity.magnitude > 0.1f)
         {
-            animator.SetBool("isMoving", true);
+           // animator.SetBool("isMoving", true);
         }
         else
         {
-            animator.SetBool("isMoving", false);
+            //animator.SetBool("isMoving", false);
         }
+
+
+        CheckRange();
+        
+    }
+
+    private void CheckRange()
+    {
+        if (Mathf.Pow(Mathf.Pow(Mathf.Abs(transform.position.x - player.position.x), 2) + Mathf.Pow(Mathf.Abs(transform.position.z - player.position.z), 2), 0.5f) < 20 && !isChasing)
+        {
+            StopCoroutine(SearchRoutine());
+            StartCoroutine(ChasePlayer());
+            //Debug.Log("ITS CLOSE");
+        }
+        
     }
 
     void LookForPlayer()
     {
-        for (int i = -1; i <= 1; i++) // Looks left, center, and right
-        {
-            Vector3 direction = Quaternion.Euler(0, i * detectionAngle / 2, 0) * transform.forward;
-            if (Physics.SphereCast(transform.position, 2f, direction, out RaycastHit hit, detectionRange)) // CHECK THIS
+        if (currentState == State.Searching) 
             {
-                if (hit.transform == player)
+            Collider[] targetsInViewRadius = Physics.OverlapSphere(transform.position, viewRadius, playerMask);
+
+            foreach (var target in targetsInViewRadius)
+            {
+                Vector3 dirToTarget = (target.transform.position - transform.position).normalized;
+                float angleToTarget = Vector3.Angle(transform.forward, dirToTarget);
+
+                if (angleToTarget < viewAngle / 2f)
                 {
-                    if (Random.Range(1,10) < aggressionLevel)
+                    float dstToTarget = Vector3.Distance(transform.position, target.transform.position);
+
+                    if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
                     {
-                        StartCoroutine(ChasePlayer());
+                        Debug.Log("omg it works");
+                        StopCoroutine(SearchRoutine());
+                        if (Random.Range(1, 10) < aggressionLevel)
+                        {
+                            StartCoroutine(ChasePlayer());
+                        }
+                        else
+                        {
+                            StartCoroutine(MenacePlayer());
+                        }
+                        return;
                     }
-                    else
-                    {
-                        StartCoroutine(MenacePlayer());
-                    }
-                    return;
                 }
             }
         }
+            
+        
+
     }
 
     IEnumerator SearchRoutine()
@@ -87,6 +124,7 @@ public class MonsterAI : MonoBehaviour
                 canTeleport = 0;
                 TeleportNearPlayer();
                 yield return new WaitForSeconds(teleportCooldown);
+                agent.SetDestination(GetRandomNavMeshPosition(transform.position));
             }
             else
             {
@@ -99,6 +137,7 @@ public class MonsterAI : MonoBehaviour
 
     IEnumerator ChasePlayer()
     {
+        
         currentState = State.Chasing;
         isChasing = true;
         agent.SetDestination(player.position);
@@ -108,7 +147,10 @@ public class MonsterAI : MonoBehaviour
 
         isChasing = false;
         TeleportRandomly();
+        yield return new WaitForSeconds(teleportCooldown);
+
         currentState = State.Searching;
+        StartCoroutine(SearchRoutine());
     }
 
     IEnumerator MenacePlayer()
@@ -128,6 +170,7 @@ public class MonsterAI : MonoBehaviour
         {
             TeleportRandomly();
             currentState = State.Searching;
+            StartCoroutine(SearchRoutine());
         }
     }
 
@@ -135,11 +178,14 @@ public class MonsterAI : MonoBehaviour
     {
         
         transform.position = GetRandomNavMeshPosition(player.position);
+        agent.ResetPath();
     }
 
     void TeleportRandomly()
     {
-        transform.position = GetRandomNavMeshPosition(transform.position);
+        //Vector3 RandomlyPlayer = new Vector3(Random.Range(-teleportRadius, teleportRadius), 1, Random.Range(-teleportRadius, teleportRadius)) + player.position;
+        transform.position = GetRandomNavMeshPosition(player.position);
+        agent.ResetPath();
     }
 
     Vector3 GetRandomNavMeshPosition(Vector3 nearPosition)
@@ -148,7 +194,9 @@ public class MonsterAI : MonoBehaviour
         NavMeshHit hit;
         if (NavMesh.SamplePosition(randomPoint, out hit, 10f, NavMesh.AllAreas))
         {
-            return hit.position;
+            if (Vector3.Distance(transform.position, hit.position) > 5f) // Only if not too close
+                return hit.position;
+            
         }
         return transform.position;
     }

@@ -67,8 +67,19 @@ public class PlayerController : MonoBehaviour
     private const float velocityThreshold = 1f;
 
     #endregion
+
+    #region Sound
+    float nextPlayTime = 0;
+    [SerializeField] AudioClip[] soundClips;
+
+
+    [SerializeField] AudioClip[] growlClip;
+    float nextGrowl = 0;
+    #endregion
     void Start()
     {
+        nextPlayTime = Time.time + UnityEngine.Random.Range(5, 10);
+        nextGrowl = Time.time + UnityEngine.Random.Range(200, 400);
         characterController = GetComponent<CharacterController>();
        Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -169,6 +180,30 @@ public class PlayerController : MonoBehaviour
         }
 
         CheckMove();
+
+
+        if (Time.time >= nextPlayTime)
+        {
+            PlayRandomSound();
+            nextPlayTime = Time.time + UnityEngine.Random.Range(100, 170);
+        }
+        if (Time.time >= nextGrowl)
+        {
+            PlayRandomGrowl();
+            nextGrowl = Time.time + UnityEngine.Random.Range(200, 350);
+        }
+    }
+
+    private void PlayRandomGrowl()
+    {
+        AudioClip clip = growlClip[UnityEngine.Random.Range(0, growlClip.Length)];
+        audioSource.PlayOneShot(clip);
+    }
+
+    private void PlayRandomSound()
+    {
+        AudioClip clip = soundClips[UnityEngine.Random.Range(0, soundClips.Length)];
+        audioSource.PlayOneShot(clip);
     }
 
     private void CheckMove()
