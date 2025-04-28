@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Tree
   - Furnace
+  - Wendigo
   layers:
   - Default
   - TransparentFX

@@ -76,6 +76,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] AudioClip[] growlClip;
     float nextGrowl = 0;
     #endregion
+    #region Death
+    [SerializeField] private GameObject deathPanel;
+    [SerializeField] private BoxCollider wendigo;
+    #endregion
+
     void Start()
     {
         nextPlayTime = Time.time + UnityEngine.Random.Range(5, 10);
@@ -85,6 +90,7 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         invPanel.SetActive(false);
         furnacePanel.SetActive(false);
+        deathPanel.SetActive(false);
         rb = GetComponent<Rigidbody>();
     }
 
@@ -141,10 +147,23 @@ public class PlayerController : MonoBehaviour
             StartCoroutine(SprintingOff());
             keyProblemSolver =true;
         }
-
+        
         
 
     }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.transform.CompareTag("Wendigo")){
+            urDead();
+        }
+    }
+
+    private void urDead()
+    {
+        
+        deathPanel.SetActive(true);
+    }
+
     private void Update()
     {
         isGrounded = Physics.Raycast(this.gameObject.transform.position, Vector3.down, length * 0.5f);

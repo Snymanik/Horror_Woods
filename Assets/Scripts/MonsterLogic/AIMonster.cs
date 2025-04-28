@@ -35,7 +35,7 @@ public class MonsterAI : MonoBehaviour
 
     void Start()
     {
-        GetComponent<Animator>().applyRootMotion = false;
+        //GetComponent<Animator>().applyRootMotion = false;
         agent = GetComponent<NavMeshAgent>();
         StartCoroutine(SearchRoutine());
     }
@@ -50,11 +50,11 @@ public class MonsterAI : MonoBehaviour
 
         if (agent.velocity.magnitude > 0.1f)
         {
-           // animator.SetBool("isMoving", true);
+            animator.SetBool("MoveWen", true);
         }
         else
         {
-            //animator.SetBool("isMoving", false);
+            animator.SetBool("MoveWen", false);
         }
 
 
@@ -91,10 +91,12 @@ public class MonsterAI : MonoBehaviour
                     if (!Physics.Raycast(transform.position, dirToTarget, dstToTarget, obstacleMask))
                     {
                         Debug.Log("omg it works");
+
                         StopCoroutine(SearchRoutine());
                         if (Random.Range(1, 10) < aggressionLevel)
                         {
-                            StartCoroutine(ChasePlayer());
+                            StartCoroutine(ChasePlayer());  
+                           
                         }
                         else
                         {
@@ -117,7 +119,9 @@ public class MonsterAI : MonoBehaviour
 
             agent.SetDestination(GetRandomNavMeshPosition(transform.position)); // check
             LookForPlayer();
+            
             yield return new WaitForSeconds(5f);
+            
 
             if (canTeleport > Random.Range(5,13))
             {
@@ -142,9 +146,9 @@ public class MonsterAI : MonoBehaviour
         isChasing = true;
         agent.SetDestination(player.position);
         roarSound.Play(); // Play roar sound when mad
-        animator.SetTrigger("roar"); // Play roaring animation
+        
         yield return new WaitForSeconds(chaseDuration);
-
+        aggressionLevel = 3;
         isChasing = false;
         TeleportRandomly();
         yield return new WaitForSeconds(teleportCooldown);
@@ -160,8 +164,12 @@ public class MonsterAI : MonoBehaviour
         transform.LookAt(player);
         aggressionLevel = Mathf.Clamp(aggressionLevel + aggressionIncrease, 0f, maxAggression);
 
+        animator.SetBool("MoveWen", false);
+        animator.SetBool("MenWen", true);
+        Debug.Log("MENACE");
         yield return new WaitForSeconds(menacingDuration);
-
+        animator.SetBool("MoveWen", true);
+        animator.SetBool("MenWen", false);
         if (Vector3.Distance(transform.position, player.position) < 3f)
         {
             StartCoroutine(ChasePlayer());
